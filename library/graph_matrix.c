@@ -147,3 +147,25 @@ int8_t getMatrixLength(graphMatrix matrix)
 
     return length;
 }
+
+void removeVisitedState(graphMatrix matrix, int8_t length)
+{
+    for (size_t i = 0; i < length; i++)
+    {
+        for (size_t j = 0; j < length; j++)
+        {
+            matrix->cells[i][j]->isVisited = false;
+        }
+    }
+}
+
+void removeConnections(graphMatrix matrix, int8_t length)
+{
+    for (size_t i = 0; i < length; i++)
+    {
+        for (size_t j = 0; j < length; j++)
+        {
+            matrix->cells[i][j]->isConnected = NOT_CONNECTED;
+        }
+    }
+}

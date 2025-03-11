@@ -23,6 +23,7 @@ struct graphMatrixNode
 struct matrixCellNode
 {
     int8_t isConnected;
+    bool isVisited;
 };
 
 // Function declarations
@@ -34,5 +35,7 @@ void createUndirectedEdge(graphMatrix, char, char);
 void createDirectedEdge(graphMatrix, char, char);
 int8_t getIndex(graphMatrix, char);
 int8_t getMatrixLength(graphMatrix);
+void removeVisitedState(graphMatrix, int8_t);
+void removeConnections(graphMatrix, int8_t);
 
 #endif

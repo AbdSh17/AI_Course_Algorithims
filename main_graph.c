@@ -7,20 +7,24 @@ int8_t bfs(graphMatrix, char);
 
 int main()
 {
-    // printhii();
+    printf("\n");
     graphMatrix matrix = initializeMyMatrix();
 
-    // printf("last node to the goal: %c", matrix->names[bfs(matrix, 'G')]);
-    printPath(matrix, 'E');
-
-    // printMatrix(matrix);
+    printPath(matrix, 'O');
 
     return 0;
 }
 
 void printPath(graphMatrix matrix, char src)
 {
-    char name = matrix->names[bfs(matrix, src)];
+    int8_t bfs_index = bfs(matrix, src);
+    if (bfs_index == -1)
+    {
+        printf("BFS printPath ERROR: Failed to find the path\n");
+        return;
+    }
+
+    char name = matrix->names[bfs_index];
     printf("%c", src);
     int count = 0;
     while (name != 'S')
@@ -40,13 +44,9 @@ void printPath(graphMatrix matrix, char src)
 int8_t bfs(graphMatrix matrix, char src)
 {
     queueHeader q = initializeQueue();
-    queueHeader visitedNodes = initializeQueue();
     enqueue(q, 0);
-    enqueue(visitedNodes, 0);
 
     int8_t length = getMatrixLength(matrix);
-
-    int count = 1;
 
     // while Queue is not empty;
     while (q)
@@ -59,22 +59,23 @@ int8_t bfs(graphMatrix matrix, char src)
 
         for (size_t j = 0; j < length; j++)
         {
-            if (matrix->cells[header][j]->isConnected && !isInTheQueue(q, j) && !isInTheQueue(visitedNodes, j))
+            if (matrix->cells[header][j]->isConnected && !matrix->cells[header][j]->isVisited)
             {
-
                 if (matrix->names[j] == src)
                 {
+                    removeVisitedState(matrix, length);
+                    freeQueue(q);
                     return header;
                 }
                 enqueue(q, j);
-                enqueue(visitedNodes, j);
+                matrix->cells[header][j]->isVisited = true;
             }
         }
-
         dequeue(q);
     }
 
-    return getQueueHead(q);
+    removeVisitedState(matrix, length);
+    return -1;
 }
 
 graphMatrix initializeMyMatrix()
