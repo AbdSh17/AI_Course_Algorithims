@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build and Run in CMD",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "gcc -o app main_graph.c ./library/graph_matrix.c ./library/queue.c && start cmd /k app"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Compile and run C program in a new Command Prompt window"
+        }
+    ]
+}
