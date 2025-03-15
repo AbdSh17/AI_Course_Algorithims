@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MAX_VERTEX_NUM 10
+#define MAX_VERTEX_NUM 20
 
 typedef struct graphMatrixNode *graphMatrix;
 
@@ -23,7 +23,7 @@ struct graphMatrixNode
 struct matrixCellNode
 {
     int8_t isConnected;
-    bool isVisited;
+    int8_t isVisited;
 };
 
 // Function declarations
@@ -37,5 +37,6 @@ int8_t getIndex(graphMatrix, char);
 int8_t getMatrixLength(graphMatrix);
 void removeVisitedState(graphMatrix, int8_t);
 void removeConnections(graphMatrix, int8_t);
+char getNodeName(graphMatrix, int8_t);
 
 #endif

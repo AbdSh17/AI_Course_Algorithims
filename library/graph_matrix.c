@@ -169,3 +169,8 @@ void removeConnections(graphMatrix matrix, int8_t length)
         }
     }
 }
+
+char getNodeName(graphMatrix matrix, int8_t index)
+{
+    return matrix->names[index];
+}
