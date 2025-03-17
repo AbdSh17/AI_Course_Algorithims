@@ -4,6 +4,9 @@ const int8_t NOT_CONNECTED = 0;
 const int8_t NULL_CONNECTED = -1;
 const int8_t CONNECTED = 1;
 
+const int8_t NOT_VISITED = 0;
+const int8_t VISITED = 1;
+
 typedef struct matrixCellNode *matrixCell;
 matrixCell initializeMatrixCell();
 
@@ -18,6 +21,7 @@ graphMatrix initializeMatrixArray()
     for (size_t i = 0; i < MAX_VERTEX_NUM; i++)
     {
         matrix->names[i] = '\0';
+        matrix->visitStatus[i] = NOT_VISITED;
     }
 
     matrix->cells = (matrixCell **)malloc(sizeof(matrixCell *) * MAX_VERTEX_NUM);
@@ -40,8 +44,7 @@ matrixCell initializeMatrixCell()
     {
         return NULL;
     }
-    cell->isConnected = NULL_CONNECTED;
-    cell->isVisited = false;
+    cell->connection = NULL_CONNECTED;
     return cell;
 }
 
@@ -60,12 +63,12 @@ void addVertex(graphMatrix matrix, char name)
 
     for (int8_t i = 0; i <= length; i++)
     {
-        matrix->cells[i][length]->isConnected = NOT_CONNECTED;
+        matrix->cells[i][length]->connection = NOT_CONNECTED;
     }
 
     for (int8_t j = 0; j <= length; j++)
     {
-        matrix->cells[length][j]->isConnected = NOT_CONNECTED;
+        matrix->cells[length][j]->connection = NOT_CONNECTED;
     }
 }
 
@@ -81,8 +84,8 @@ void createUndirectedEdge(graphMatrix matrix, char src1, char src2)
         return;
     }
 
-    matrix->cells[src1_index][src2_index]->isConnected = CONNECTED;
-    matrix->cells[src2_index][src1_index]->isConnected = CONNECTED;
+    matrix->cells[src1_index][src2_index]->connection = CONNECTED;
+    matrix->cells[src2_index][src1_index]->connection = CONNECTED;
 }
 
 void createDirectedEdge(graphMatrix matrix, char src1, char src2)
@@ -97,7 +100,50 @@ void createDirectedEdge(graphMatrix matrix, char src1, char src2)
         return;
     }
 
-    matrix->cells[src1_index][src2_index]->isConnected = CONNECTED;
+    matrix->cells[src1_index][src2_index]->connection = CONNECTED;
+}
+
+void createUndirectedWeightedEdge(graphMatrix matrix, char src1, char src2, int8_t weight)
+{
+    if (weight < 0)
+    {
+        printf("ERROR createUndirectedWeightedEdge: Unvalid weight\n");
+        return;
+    }
+
+    int8_t src1_index = -1, src2_index = -1;
+    src1_index = getIndex(matrix, src1);
+    src2_index = getIndex(matrix, src2);
+
+    if (src1_index == -1 || src2_index == -1)
+    {
+        printf("Invalid Name");
+        return;
+    }
+
+    matrix->cells[src1_index][src2_index]->connection = weight;
+    matrix->cells[src2_index][src1_index]->connection = weight;
+}
+
+void createDirectedWeightedEdge(graphMatrix matrix, char src1, char src2, int8_t weight)
+{
+    if (weight < 0)
+    {
+        printf("ERROR createUndirectedWeightedEdge: Unvalid weight\n");
+        return;
+    }
+
+    int8_t src1_index = -1, src2_index = -1;
+    src1_index = getIndex(matrix, src1);
+    src2_index = getIndex(matrix, src2);
+
+    if (src1_index == -1 || src2_index == -1)
+    {
+        printf("Invalid Name");
+        return;
+    }
+
+    matrix->cells[src1_index][src2_index]->connection = weight;
 }
 
 int8_t getIndex(graphMatrix matrix, char src)
@@ -131,7 +177,7 @@ void printMatrix(graphMatrix matrix)
         printf("%c ", matrix->names[i]);
         for (int j = 0; j < size; j++)
         {
-            printf("%d ", matrix->cells[i][j]->isConnected);
+            printf("%d ", matrix->cells[i][j]->connection);
         }
         printf("\n");
     }
@@ -152,10 +198,7 @@ void removeVisitedState(graphMatrix matrix, int8_t length)
 {
     for (size_t i = 0; i < length; i++)
     {
-        for (size_t j = 0; j < length; j++)
-        {
-            matrix->cells[i][j]->isVisited = false;
-        }
+        matrix->visitStatus[i] = NOT_VISITED;
     }
 }
 
@@ -165,7 +208,7 @@ void removeConnections(graphMatrix matrix, int8_t length)
     {
         for (size_t j = 0; j < length; j++)
         {
-            matrix->cells[i][j]->isConnected = NOT_CONNECTED;
+            matrix->cells[i][j]->connection = NOT_CONNECTED;
         }
     }
 }
